@@ -1,0 +1,33 @@
+# Created by venv; see https://docs.python.org/3/library/venv.html
+
+# Virtual Environment
+venv/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment Variables
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Testing
+.pytest_cache/
+
+# Coverage
+.coverage
+htmlcov/
+
+# SQLite (we'll add this later)
+*.db
+*.sqlite3
