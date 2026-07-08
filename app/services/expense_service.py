@@ -20,6 +20,39 @@ Routes should call these functions instead of implementing
 business logic themselves.
 """
 
+def _find_expense_index(expense_id: int) -> int:
+
+    """
+
+    Find the index of an expense by its unique ID.
+
+    Args:
+
+        expense_id: Unique identifier of the expense.
+
+    Returns:
+
+        int: Index of the matching expense in the list.
+
+    Raises:
+
+        HTTPException: If the expense does not exist.
+
+    """
+
+    for index, expense in enumerate(expenses):
+
+        if expense.id == expense_id:
+
+            return index
+
+    raise HTTPException(
+
+        status_code=status.HTTP_404_NOT_FOUND,
+
+        detail="Expense not found",
+
+    )
 
 def create_expense(expense: Expense) -> ExpenseResponse:
     """
@@ -48,7 +81,6 @@ def create_expense(expense: Expense) -> ExpenseResponse:
 
     return new_expense
 
-
 def get_all_expenses() -> list[ExpenseResponse]:
     """
     Retrieve all stored expenses.
@@ -58,7 +90,6 @@ def get_all_expenses() -> list[ExpenseResponse]:
     """
 
     return expenses
-
 
 def get_expense_by_id(expense_id: int) -> ExpenseResponse:
     """
@@ -74,10 +105,72 @@ def get_expense_by_id(expense_id: int) -> ExpenseResponse:
         HTTPException: If the expense does not exist.
     """
 
-    for expense in expenses:
-        if expense.id == expense_id:
-            return expense
+   
 
+    index = _find_expense_index(expense_id)
+    return expenses[index]
+
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail="Expense not found",
+    )
+
+def update_expense_by_id(expense_id: int, updated_expense: Expense) -> ExpenseResponse:
+    """
+    Update an existing expense by its unique ID.
+
+    Args:
+        expense_id: Unique identifier of the expense to be updated.
+        updated_expense: New data for the expense.
+
+    Returns:
+        ExpenseResponse: The updated expense.
+
+    Raises:
+        HTTPException: If the expense does not exist.
+    """
+
+    index = _find_expense_index(expense_id)
+
+    existing_expense = expenses[index]
+
+    updated = ExpenseResponse(
+
+        id=existing_expense.id,
+
+        amount=updated_expense.amount,
+
+        category=updated_expense.category,
+
+        description=updated_expense.description,
+
+        created_at=existing_expense.created_at,
+
+    )
+
+    expenses[index] = updated
+    return updated
+
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail="Expense not found",
+    )
+
+def delete_expense_by_id(expense_id: int) -> None:
+    """
+    Delete an existing expense by its unique ID.
+
+    Args:
+        expense_id: Unique identifier of the expense to be deleted.
+
+    Raises:
+        HTTPException: If the expense does not exist.
+    """
+
+    index = _find_expense_index(expense_id)
+
+    deleted_expense = expenses.pop(index)
+    return deleted_expense
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail="Expense not found",
