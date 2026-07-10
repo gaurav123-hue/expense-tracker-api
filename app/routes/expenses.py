@@ -65,8 +65,8 @@ def get_expenses():
         "expenses": get_all_expenses_service()
     }
 
-@router.get("/")
-def get_expense(expense_id: int):
+@router.get("/id")
+def get_expense_with_id(expense_id: int):
     """
     Retrieve a single expense using its unique ID.
 
@@ -84,7 +84,7 @@ def get_expense(expense_id: int):
         "expense": get_expense_by_id_service(expense_id)
     }
 
-@router.put("/")
+@router.put("/id")
 def update_expense(expense_id: int, updated_expense: Expense):
     """
     Update an existing expense by its unique ID.
@@ -104,7 +104,7 @@ def update_expense(expense_id: int, updated_expense: Expense):
         "expense": update_expense_by_id_service(expense_id, updated_expense)
     }
 
-@router.delete("/")
+@router.delete("/id")
 def delete_expense(expense_id: int):
     """
     Delete an existing expense by its unique ID.
