@@ -20,7 +20,7 @@ Routes should call these functions instead of implementing
 business logic themselves.
 """
 
-def _find_expense_index(expense_id: int) -> int:
+def _find_expense_index_helper(expense_id: int) -> int:
 
     """
 
@@ -54,7 +54,7 @@ def _find_expense_index(expense_id: int) -> int:
 
     )
 
-def create_expense(expense: Expense) -> ExpenseResponse:
+def create_expense_service(expense: Expense) -> ExpenseResponse:
     """
     Create a new expense.
 
@@ -81,7 +81,7 @@ def create_expense(expense: Expense) -> ExpenseResponse:
 
     return new_expense
 
-def get_all_expenses() -> list[ExpenseResponse]:
+def get_all_expenses_service() -> list[ExpenseResponse]:
     """
     Retrieve all stored expenses.
 
@@ -91,7 +91,7 @@ def get_all_expenses() -> list[ExpenseResponse]:
 
     return expenses
 
-def get_expense_by_id(expense_id: int) -> ExpenseResponse:
+def get_expense_by_id_service(expense_id: int) -> ExpenseResponse:
     """
     Retrieve a single expense by its unique ID.
 
@@ -105,17 +105,13 @@ def get_expense_by_id(expense_id: int) -> ExpenseResponse:
         HTTPException: If the expense does not exist.
     """
 
-   
 
-    index = _find_expense_index(expense_id)
+    index = _find_expense_index_helper(expense_id)
     return expenses[index]
 
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail="Expense not found",
-    )
+    
 
-def update_expense_by_id(expense_id: int, updated_expense: Expense) -> ExpenseResponse:
+def update_expense_by_id_service(expense_id: int, updated_expense: Expense) -> ExpenseResponse:
     """
     Update an existing expense by its unique ID.
 
@@ -130,7 +126,7 @@ def update_expense_by_id(expense_id: int, updated_expense: Expense) -> ExpenseRe
         HTTPException: If the expense does not exist.
     """
 
-    index = _find_expense_index(expense_id)
+    index = _find_expense_index_helper(expense_id)
 
     existing_expense = expenses[index]
 
@@ -151,12 +147,8 @@ def update_expense_by_id(expense_id: int, updated_expense: Expense) -> ExpenseRe
     expenses[index] = updated
     return updated
 
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail="Expense not found",
-    )
-
-def delete_expense_by_id(expense_id: int) -> None:
+    
+def delete_expense_by_id_service(expense_id: int) -> None:
     """
     Delete an existing expense by its unique ID.
 
@@ -167,11 +159,37 @@ def delete_expense_by_id(expense_id: int) -> None:
         HTTPException: If the expense does not exist.
     """
 
-    index = _find_expense_index(expense_id)
+    index = _find_expense_index_helper(expense_id)
 
     deleted_expense = expenses.pop(index)
     return deleted_expense
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail="Expense not found",
-    )
+   
+
+def filter_expenses_by_category_service(category: str) -> list[ExpenseResponse]:
+    """
+    Filter expenses based on their category.
+
+    Args:
+        category: The category to filter expenses by.
+
+    Returns:
+        list[ExpenseResponse]: List of expenses that match the specified category.
+    """
+
+    filtered_expenses = [expense for expense in expenses if expense.category == category]
+    return filtered_expenses
+
+
+def get_expenses_by_min_price_service(min_price: float) -> list[ExpenseResponse]:
+    """
+    Filter expenses based on a minimum price.
+
+    Args:
+        min_price: The minimum price to filter expenses by.
+
+    Returns:
+        list[ExpenseResponse]: List of expenses that have an amount greater than or equal to the specified minimum price.
+    """
+
+    filtered_expenses = [expense for expense in expenses if expense.amount >= min_price]
+    return filtered_expenses
